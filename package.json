@@ -1,0 +1,24 @@
+{
+  "name": "industrial-nav-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "nuxt": "^3.8.0"
+  },
+  "dependencies": {
+    "@headlessui/vue": "^1.7.16",
+    "@heroicons/vue": "^2.0.18",
+    "@nuxt/ui": "^2.11.1",
+    "@nuxtjs/tailwindcss": "^6.8.4",
+    "@vercel/postgres": "^0.10.0",
+    "buffer": "^6.0.3"
+  }
+}
