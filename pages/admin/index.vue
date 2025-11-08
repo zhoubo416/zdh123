@@ -64,7 +64,13 @@
                   <UButton variant="ghost" size="sm" @click="openCategoryModal(category)">
                     <Icon name="heroicons:pencil" class="w-4 h-4" />
                   </UButton>
-                  <UButton variant="ghost" size="sm" @click="deleteCategory(category.id)">
+                  <UButton 
+                    variant="ghost" 
+                    size="sm" 
+                    @click="deleteCategory(category.id)"
+                    :loading="deleting"
+                    :disabled="deleting"
+                  >
                     <Icon name="heroicons:trash" class="w-4 h-4 text-red-500" />
                   </UButton>
                 </div>
@@ -107,7 +113,13 @@
                   <UButton variant="ghost" size="sm" @click="openCompanyModal(company)">
                     <Icon name="heroicons:pencil" class="w-4 h-4" />
                   </UButton>
-                  <UButton variant="ghost" size="sm" @click="deleteCompany(company.id)">
+                  <UButton 
+                    variant="ghost" 
+                    size="sm" 
+                    @click="deleteCompany(company.id)"
+                    :loading="deleting"
+                    :disabled="deleting"
+                  >
                     <Icon name="heroicons:trash" class="w-4 h-4 text-red-500" />
                   </UButton>
                 </div>
@@ -139,7 +151,13 @@
                   <UButton variant="ghost" size="sm" @click="openNewsModal(news)">
                     <Icon name="heroicons:pencil" class="w-4 h-4" />
                   </UButton>
-                  <UButton variant="ghost" size="sm" @click="deleteNews(news.id)">
+                  <UButton 
+                    variant="ghost" 
+                    size="sm" 
+                    @click="deleteNews(news.id)"
+                    :loading="deleting"
+                    :disabled="deleting"
+                  >
                     <Icon name="heroicons:trash" class="w-4 h-4 text-red-500" />
                   </UButton>
                 </div>
@@ -304,6 +322,7 @@ definePageMeta({
 // 响应式数据
 const activeTab = ref('categories')
 const saving = ref(false)
+const deleting = ref(false)
 
 // 模态框状态
 const categoryModalOpen = ref(false)
