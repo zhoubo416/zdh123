@@ -8,7 +8,7 @@
             v-if="company.logo_url"
             :src="company.logo_url"
             :alt="company.name"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-contain"
           />
           <Icon v-else name="heroicons:building-office" class="w-6 h-6 text-gray-400" />
         </div>
