@@ -30,11 +30,11 @@
 
           <!-- 右侧菜单 -->
           <div class="flex items-center space-x-4">
-            <UButton variant="ghost" size="sm">
+            <UButton variant="ghost" size="sm" @click="viewFavorites">
               <Icon name="heroicons:heart" class="w-5 h-5" />
               收藏
             </UButton>
-            <UButton variant="ghost" size="sm">
+            <UButton variant="ghost" size="sm" @click="viewNews">
               <Icon name="heroicons:rss" class="w-5 h-5" />
               资讯
             </UButton>
@@ -66,5 +66,13 @@ const handleSearch = () => {
   if (searchQuery.value.trim()) {
     navigateTo(`/search?q=${encodeURIComponent(searchQuery.value)}`)
   }
+}
+
+const viewFavorites = () => {
+  navigateTo('/favorites')
+}
+
+const viewNews = () => {
+  navigateTo('/news')
 }
 </script>
