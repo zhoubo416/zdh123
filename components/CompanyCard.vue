@@ -1,7 +1,7 @@
 <template>
   <div class="company-card group">
     <!-- 公司头部信息 -->
-    <div class="flex items-start justify-between mb-4">
+    <div class="flex items-start justify-between mb-2">
       <div class="flex items-center space-x-3">
         <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
           <img
@@ -20,25 +20,50 @@
         </div>
       </div>
       
-      <!-- 分类标签 -->
-      <span v-if="company.category_name" class="category-badge">
-        {{ company.category_name }}
+      
+    </div>
+    <!-- 分类标签 -->
+    <div v-if="company.category_names && company.category_names.length > 0" class="flex flex-wrap gap-1 mb-2">
+      <span 
+        v-for="categoryName in company.category_names" 
+        :key="categoryName"
+        class="category-badge"
+      >
+        {{ categoryName }}
       </span>
     </div>
 
+    <!-- 供应商信息 -->
+    <div v-if="company.supplier_names && company.supplier_names.length > 0" class="mb-3">
+      <div class="flex items-center mb-2">
+        <Icon name="heroicons:truck" class="w-4 h-4 text-orange-600 mr-2" />
+        <span class="text-sm font-medium text-gray-700">合作供应商</span>
+      </div>
+      <div class="flex flex-wrap gap-1">
+        <span 
+          v-for="supplierName in company.supplier_names" 
+          :key="supplierName"
+          class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors cursor-pointer"
+          :title="`供应商: ${supplierName}`"
+        >
+          <Icon name="heroicons:building-storefront" class="w-3 h-3 mr-1" />
+          {{ supplierName }}
+        </span>
+      </div>
+    </div>
     <!-- 公司描述 -->
-    <p v-if="company.description" class="text-sm text-gray-600 mb-4 line-clamp-2">
+    <p v-if="company.description" class="text-sm text-gray-600 mt-4 mb-4 line-clamp-2">
       {{ company.description }}
     </p>
 
     <!-- 公司基本信息 -->
-    <div class="space-y-2 mb-4">
+    <div class="mb-4 flex">
       <div v-if="company.founded_year" class="flex items-center text-sm text-gray-500">
         <Icon name="heroicons:calendar" class="w-4 h-4 mr-2" />
         成立于 {{ company.founded_year }}年
       </div>
       <div v-if="company.headquarters" class="flex items-center text-sm text-gray-500">
-        <Icon name="heroicons:map-pin" class="w-4 h-4 mr-2" />
+        <Icon name="heroicons:map-pin" class="w-4 h-4 ml-2" />
         {{ company.headquarters }}
       </div>
     </div>

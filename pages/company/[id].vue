@@ -27,10 +27,16 @@
               <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ company.name }}</h1>
               <p v-if="company.name_en" class="text-lg text-gray-600 mb-2">{{ company.name_en }}</p>
               <div class="flex items-center space-x-4">
-                <span v-if="company.category_name" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  <Icon :name="`heroicons:${company.category_icon || 'cube'}`" class="w-4 h-4 mr-1" />
-                  {{ company.category_name }}
-                </span>
+                <div v-if="company.category_names && company.category_names.length > 0" class="flex flex-wrap gap-2">
+                  <span 
+                    v-for="(categoryName, index) in company.category_names" 
+                    :key="categoryName"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                  >
+                    <Icon :name="`heroicons:${company.category_icons?.[index] || 'cube'}`" class="w-4 h-4 mr-1" />
+                    {{ categoryName }}
+                  </span>
+                </div>
                 <a
                   :href="company.website_url"
                   target="_blank"
@@ -71,7 +77,16 @@
             <Icon name="heroicons:tag" class="w-5 h-5 text-gray-400 mr-3" />
             <div>
               <p class="text-sm text-gray-500">主营业务</p>
-              <p class="font-medium">{{ company.category_name || '工业自动化' }}</p>
+              <div v-if="company.category_names && company.category_names.length > 0" class="flex flex-wrap gap-1">
+                <span 
+                  v-for="categoryName in company.category_names" 
+                  :key="categoryName"
+                  class="font-medium text-sm"
+                >
+                  {{ categoryName }}
+                </span>
+              </div>
+              <p v-else class="font-medium">工业自动化</p>
             </div>
           </div>
         </div>

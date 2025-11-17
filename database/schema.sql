@@ -30,6 +30,15 @@ CREATE TABLE companies (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 创建公司分类关联表（多对多关系）
+CREATE TABLE company_categories (
+    id SERIAL PRIMARY KEY,
+    company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(company_id, category_id)
+);
+
 -- 创建导航链接表
 CREATE TABLE navigation_links (
     id SERIAL PRIMARY KEY,
@@ -56,8 +65,35 @@ CREATE TABLE news_feeds (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 创建供应商表
+CREATE TABLE suppliers (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact_person VARCHAR(255),
+    phone VARCHAR(50),
+    email VARCHAR(255),
+    address TEXT,
+    website_url TEXT,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建公司供应商关联表（多对多关系）
+CREATE TABLE company_suppliers (
+    id SERIAL PRIMARY KEY,
+    company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+    supplier_id INTEGER REFERENCES suppliers(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(company_id, supplier_id)
+);
+
 -- 创建索引
 CREATE INDEX idx_companies_category ON companies(category_id);
+CREATE INDEX idx_company_categories_company ON company_categories(company_id);
+CREATE INDEX idx_company_categories_category ON company_categories(category_id);
+CREATE INDEX idx_company_suppliers_company ON company_suppliers(company_id);
+CREATE INDEX idx_company_suppliers_supplier ON company_suppliers(supplier_id);
 CREATE INDEX idx_navigation_links_company ON navigation_links(company_id);
 CREATE INDEX idx_news_feeds_company ON news_feeds(company_id);
 CREATE INDEX idx_news_feeds_published ON news_feeds(published_at DESC);

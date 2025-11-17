@@ -30,6 +30,10 @@
 
           <!-- 右侧菜单 -->
           <div class="flex items-center space-x-4">
+            <UButton variant="ghost" size="sm" to="/suppliers">
+              <Icon name="heroicons:truck" class="w-5 h-5" />
+              供应商
+            </UButton>
             <UButton variant="ghost" size="sm" @click="viewFavorites">
               <Icon name="heroicons:heart" class="w-5 h-5" />
               收藏

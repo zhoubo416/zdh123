@@ -100,13 +100,33 @@
                       v-if="company.logo_url"
                       :src="company.logo_url"
                       :alt="company.name"
-                      class="w-full h-full object-cover"
+                      class="w-full h-full object-contain"
                     />
                     <Icon v-else name="heroicons:building-office" class="w-5 h-5 text-gray-400" />
                   </div>
                   <div>
                     <p class="text-sm font-medium text-gray-900">{{ company.name }}</p>
-                    <p class="text-sm text-gray-500">{{ company.category_name }}</p>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      <span 
+                        v-for="categoryName in company.category_names" 
+                        :key="categoryName"
+                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                      >
+                        {{ categoryName }}
+                      </span>
+                      <span v-if="!company.category_names || company.category_names.length === 0" class="text-sm text-gray-500">
+                        未分类
+                      </span>
+                    </div>
+                    <div v-if="company.supplier_names && company.supplier_names.length > 0" class="flex flex-wrap gap-1 mt-1">
+                      <span 
+                        v-for="supplierName in company.supplier_names" 
+                        :key="supplierName"
+                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800"
+                      >
+                        {{ supplierName }}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div class="flex items-center space-x-2">
@@ -126,6 +146,70 @@
               </div>
             </li>
           </ul>
+        </div>
+      </div>
+
+      <!-- 供应商管理 -->
+      <div v-if="activeTab === 'suppliers'" class="space-y-6">
+        <!-- 供应商列表 -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-medium text-gray-900">供应商列表</h3>
+              <UButton @click="openSupplierModal()" icon="heroicons:plus">
+                添加供应商
+              </UButton>
+            </div>
+            
+            <div class="space-y-3">
+              <div
+                v-for="supplier in suppliers"
+                :key="supplier.id"
+                class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                <div class="flex items-center space-x-4">
+                  <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Icon name="heroicons:truck" class="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">{{ supplier.name }}</p>
+                    <div class="text-sm text-gray-500">
+                      <span v-if="supplier.contact_person">联系人：{{ supplier.contact_person }}</span>
+                      <span v-if="supplier.phone" class="ml-4">电话：{{ supplier.phone }}</span>
+                    </div>
+                    <div v-if="supplier.company_names && supplier.company_names.length > 0" class="flex flex-wrap gap-1 mt-1">
+                      <span 
+                        v-for="companyName in supplier.company_names" 
+                        :key="companyName"
+                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                      >
+                        {{ companyName }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <UButton
+                    @click="openSupplierModal(supplier)"
+                    variant="ghost"
+                    size="sm"
+                    icon="heroicons:pencil"
+                  >
+                    编辑
+                  </UButton>
+                  <UButton
+                    @click="deleteSupplier(supplier.id)"
+                    variant="ghost"
+                    size="sm"
+                    color="red"
+                    icon="heroicons:trash"
+                  >
+                    删除
+                  </UButton>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -218,10 +302,12 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">分类</label>
-            <USelect
-              v-model="companyForm.category_id"
+            <USelectMenu
+              v-model="companyForm.category_ids"
               :options="categoryOptions"
               placeholder="请选择分类"
+              multiple
+              searchable
               required
             />
           </div>
@@ -244,6 +330,16 @@
             </div>
           </div>
           <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">关联供应商</label>
+            <USelectMenu
+              v-model="companyForm.supplier_ids"
+              :options="supplierOptions"
+              placeholder="请选择关联供应商"
+              multiple
+              searchable
+            />
+          </div>
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">公司描述</label>
             <UTextarea v-model="companyForm.description" placeholder="请输入公司描述" />
           </div>
@@ -253,6 +349,101 @@
           </div>
         </form>
       </div>
+    </UModal>
+
+    <!-- 供应商编辑模态框 -->
+    <UModal v-model="supplierModalOpen">
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-semibold">
+            {{ editingSupplier ? '编辑供应商' : '添加供应商' }}
+          </h3>
+        </template>
+
+        <form @submit.prevent="saveSupplier" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">供应商名称</label>
+            <UInput
+              v-model="supplierForm.name"
+              placeholder="请输入供应商名称"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">联系人</label>
+            <UInput
+              v-model="supplierForm.contact_person"
+              placeholder="请输入联系人姓名"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">联系电话</label>
+            <UInput
+              v-model="supplierForm.phone"
+              placeholder="请输入联系电话"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+            <UInput
+              v-model="supplierForm.email"
+              type="email"
+              placeholder="请输入邮箱地址"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">地址</label>
+            <UTextarea
+              v-model="supplierForm.address"
+              placeholder="请输入地址"
+              rows="2"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">网站</label>
+            <UInput
+              v-model="supplierForm.website_url"
+              placeholder="请输入网站地址"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">关联公司</label>
+            <USelectMenu
+              v-model="supplierForm.company_ids"
+              :options="companyOptions"
+              placeholder="请选择关联公司"
+              multiple
+              searchable
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">描述</label>
+            <UTextarea
+              v-model="supplierForm.description"
+              placeholder="请输入供应商描述"
+              rows="3"
+            />
+          </div>
+        </form>
+
+        <template #footer>
+          <div class="flex justify-end space-x-3">
+            <UButton variant="ghost" @click="supplierModalOpen = false">
+              取消
+            </UButton>
+            <UButton @click="saveSupplier" :loading="saving">
+              {{ editingSupplier ? '更新' : '创建' }}
+            </UButton>
+          </div>
+        </template>
+      </UCard>
     </UModal>
 
     <!-- 新闻编辑模态框 -->
@@ -327,16 +518,19 @@ const deleting = ref(false)
 // 模态框状态
 const categoryModalOpen = ref(false)
 const companyModalOpen = ref(false)
+const supplierModalOpen = ref(false)
 const newsModalOpen = ref(false)
 
 // 数据
 const categories = ref([])
 const companies = ref([])
+const suppliers = ref([])
 const newsList = ref([])
 
 // 编辑状态
 const editingCategory = ref(null)
 const editingCompany = ref(null)
+const editingSupplier = ref(null)
 const editingNews = ref(null)
 
 // 表单数据
@@ -350,12 +544,24 @@ const categoryForm = ref({
 const companyForm = ref({
   name: '',
   name_en: '',
-  category_id: null,
+  category_ids: [],
   website_url: '',
   logo_url: '',
   founded_year: null,
   headquarters: '',
-  description: ''
+  description: '',
+  supplier_ids: []
+})
+
+const supplierForm = ref({
+  name: '',
+  contact_person: '',
+  phone: '',
+  email: '',
+  address: '',
+  website_url: '',
+  description: '',
+  company_ids: []
 })
 
 const newsForm = ref({
@@ -372,6 +578,7 @@ const newsForm = ref({
 const tabs = [
   { key: 'categories', name: '分类管理', icon: 'heroicons:tag' },
   { key: 'companies', name: '公司管理', icon: 'heroicons:building-office' },
+  { key: 'suppliers', name: '供应商管理', icon: 'heroicons:truck' },
   { key: 'news', name: '新闻管理', icon: 'heroicons:newspaper' }
 ]
 
@@ -381,7 +588,11 @@ const categoryOptions = computed(() =>
 )
 
 const companyOptions = computed(() => 
-  companies.value.map(comp => ({ label: comp.name, value: comp.id }))
+  companies.value.map(company => ({ label: company.name, value: company.id }))
+)
+
+const supplierOptions = computed(() => 
+  suppliers.value.map(supplier => ({ label: supplier.name, value: supplier.id }))
 )
 
 // 方法
@@ -399,13 +610,15 @@ const formatDate = (dateString) => {
 // 数据加载
 const loadData = async () => {
   try {
-    const [categoriesRes, companiesRes, newsRes] = await Promise.all([
+    const [categoriesRes, companiesRes, suppliersRes, newsRes] = await Promise.all([
       $fetch('/api/admin/categories'),
       $fetch('/api/admin/companies'),
+      $fetch('/api/admin/suppliers'),
       $fetch('/api/admin/news')
     ])
     categories.value = categoriesRes.data || []
     companies.value = companiesRes.data || []
+    suppliers.value = suppliersRes.data || []
     newsList.value = newsRes.data || []
   } catch (error) {
     console.error('Failed to load data:', error)
@@ -465,17 +678,37 @@ const deleteCategory = async (id) => {
 const openCompanyModal = (company = null) => {
   editingCompany.value = company
   if (company) {
-    companyForm.value = { ...company }
+    // 编辑模式：从公司数据中提取分类ID数组，转换为选择器需要的格式
+    const categoryIds = company.category_ids || []
+    const selectedCategories = categoryIds.map(id => {
+      const category = categories.value.find(cat => cat.id === id)
+      return category ? { label: category.name, value: category.id } : { label: `分类${id}`, value: id }
+    })
+    
+    // 处理供应商ID数组
+    const supplierIds = company.supplier_ids || []
+    const selectedSuppliers = supplierIds.map(id => {
+      const supplier = suppliers.value.find(sup => sup.id === id)
+      return supplier ? { label: supplier.name, value: supplier.id } : { label: `供应商${id}`, value: id }
+    })
+    
+    companyForm.value = { 
+      ...company,
+      category_ids: selectedCategories,
+      supplier_ids: selectedSuppliers
+    }
   } else {
+    // 新增模式：重置表单
     companyForm.value = {
       name: '',
       name_en: '',
-      category_id: null,
+      category_ids: [],
       website_url: '',
       logo_url: '',
       founded_year: null,
       headquarters: '',
-      description: ''
+      description: '',
+      supplier_ids: []
     }
   }
   companyModalOpen.value = true
@@ -485,9 +718,24 @@ const saveCompany = async () => {
   try {
     saving.value = true
     const method = editingCompany.value ? 'PUT' : 'POST'
+    
+    // 处理分类ID数据格式
+    const categoryIds = Array.isArray(companyForm.value.category_ids) 
+      ? companyForm.value.category_ids.map(item => 
+          typeof item === 'object' ? item.value : item
+        )
+      : []
+    
+    // 处理供应商ID数据格式
+    const supplierIds = Array.isArray(companyForm.value.supplier_ids) 
+      ? companyForm.value.supplier_ids.map(item => 
+          typeof item === 'object' ? item.value : item
+        )
+      : []
+    
     const data = editingCompany.value 
-      ? { ...companyForm.value, id: editingCompany.value.id }
-      : companyForm.value
+      ? { ...companyForm.value, id: editingCompany.value.id, category_ids: categoryIds, supplier_ids: supplierIds }
+      : { ...companyForm.value, category_ids: categoryIds, supplier_ids: supplierIds }
     
     await $fetch('/api/admin/companies', {
       method,
@@ -575,6 +823,83 @@ const deleteNews = async (id) => {
       await loadData()
     } catch (error) {
       console.error('Failed to delete news:', error)
+      alert('删除失败：' + error.message)
+    }
+  }
+}
+
+// 供应商相关方法
+const openSupplierModal = (supplier = null) => {
+  editingSupplier.value = supplier
+  if (supplier) {
+    // 编辑模式：从供应商数据中提取公司ID数组，转换为选择器需要的格式
+    const companyIds = supplier.company_ids || []
+    const selectedCompanies = companyIds.map(id => {
+      const company = companies.value.find(comp => comp.id === id)
+      return company ? { label: company.name, value: company.id } : { label: `公司${id}`, value: id }
+    })
+    
+    supplierForm.value = { 
+      ...supplier,
+      company_ids: selectedCompanies
+    }
+  } else {
+    // 新增模式：重置表单
+    supplierForm.value = {
+      name: '',
+      contact_person: '',
+      phone: '',
+      email: '',
+      address: '',
+      website_url: '',
+      description: '',
+      company_ids: []
+    }
+  }
+  supplierModalOpen.value = true
+}
+
+const saveSupplier = async () => {
+  try {
+    saving.value = true
+    const method = editingSupplier.value ? 'PUT' : 'POST'
+    
+    // 处理公司ID数据格式
+    const companyIds = Array.isArray(supplierForm.value.company_ids) 
+      ? supplierForm.value.company_ids.map(item => 
+          typeof item === 'object' ? item.value : item
+        )
+      : []
+    
+    const data = editingSupplier.value 
+      ? { ...supplierForm.value, id: editingSupplier.value.id, company_ids: companyIds }
+      : { ...supplierForm.value, company_ids: companyIds }
+    
+    await $fetch('/api/admin/suppliers', {
+      method,
+      body: data
+    })
+    
+    supplierModalOpen.value = false
+    await loadData()
+  } catch (error) {
+    console.error('Failed to save supplier:', error)
+    alert('保存失败：' + error.message)
+  } finally {
+    saving.value = false
+  }
+}
+
+const deleteSupplier = async (id) => {
+  if (confirm('确定要删除这个供应商吗？')) {
+    try {
+      await $fetch('/api/admin/suppliers', {
+        method: 'DELETE',
+        body: { id }
+      })
+      await loadData()
+    } catch (error) {
+      console.error('Failed to delete supplier:', error)
       alert('删除失败：' + error.message)
     }
   }
