@@ -34,6 +34,16 @@ export async function fetchNews(limit: number = 20, companyId?: number) {
   }
 }
 
+export async function fetchSuppliers() {
+  try {
+    const response = await $fetch('/api/suppliers')
+    return response.data || []
+  } catch (error) {
+    console.error('Failed to fetch suppliers:', error)
+    return []
+  }
+}
+
 export async function fetchNavigationLinks(companyId: number) {
   try {
     const response = await $fetch(`/api/companies/${companyId}/links`)

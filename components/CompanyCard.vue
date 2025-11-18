@@ -19,6 +19,33 @@
           <p v-if="company.name_en" class="text-sm text-gray-500">{{ company.name_en }}</p>
         </div>
       </div>
+
+      <!-- 快速导航链接 -->
+    <div class="mb-4 flex">
+
+      <!-- 主要链接（始终显示） -->
+      <a
+          :href="company.website_url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-link flex items-center text-sm"
+        >
+          <Icon name="heroicons:home" class="w-4 h-4 ml-2" />
+          官方网站
+        </a>
+      <a
+        v-for="link in navigationLinks"
+        :key="link.id"
+        :href="link.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="nav-link flex items-center text-sm"
+        :title="link.description"
+      >
+        <Icon name="heroicons:link" class="w-4 h-4 ml-2" />
+        {{ link.title }}
+      </a>
+    </div>
       
       
     </div>
@@ -65,54 +92,6 @@
       <div v-if="company.headquarters" class="flex items-center text-sm text-gray-500">
         <Icon name="heroicons:map-pin" class="w-4 h-4 ml-2" />
         {{ company.headquarters }}
-      </div>
-    </div>
-
-    <!-- 快速导航链接 -->
-    <div class="space-y-2 mb-4">
-      <div class="flex items-center justify-between">
-        <span class="text-sm font-medium text-gray-700">快速导航</span>
-        <UButton
-          variant="ghost"
-          size="xs"
-          @click="toggleLinks"
-        >
-          <Icon 
-            :name="showLinks ? 'heroicons:chevron-up' : 'heroicons:chevron-down'" 
-            class="w-4 h-4" 
-          />
-        </UButton>
-      </div>
-      
-      <!-- 主要链接（始终显示） -->
-      <div class="space-y-1">
-        <a
-          :href="company.website_url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="nav-link flex items-center text-sm"
-        >
-          <Icon name="heroicons:home" class="w-4 h-4 mr-2" />
-          官方网站
-          <Icon name="heroicons:arrow-top-right-on-square" class="w-3 h-3 ml-1" />
-        </a>
-      </div>
-
-      <!-- 扩展链接（可折叠） -->
-      <div v-if="showLinks && navigationLinks.length > 0" class="space-y-1 pt-2 border-t">
-        <a
-          v-for="link in navigationLinks"
-          :key="link.id"
-          :href="link.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="nav-link flex items-center text-sm"
-          :title="link.description"
-        >
-          <Icon name="heroicons:link" class="w-4 h-4 mr-2" />
-          {{ link.title }}
-          <Icon name="heroicons:arrow-top-right-on-square" class="w-3 h-3 ml-1" />
-        </a>
       </div>
     </div>
 

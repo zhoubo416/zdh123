@@ -1,8 +1,7 @@
 <template>
-  <div class="space-y-6">
+  <div class="w-full">
     <!-- 信息流标题和筛选 -->
-    <div class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold text-gray-900">最新资讯</h3>
+    <!-- <div class="flex items-center justify-between">
       <div class="flex items-center space-x-2">
         <USelectMenu
           v-model="selectedCompany"
@@ -14,14 +13,14 @@
           <Icon name="heroicons:arrow-path" class="w-4 h-4" />
         </UButton>
       </div>
-    </div>
+    </div> -->
 
     <!-- 信息流列表 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="flex flex-col">
       <div
         v-for="feed in displayedFeeds"
         :key="feed.id"
-        class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-200"
+        class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-200 mb-2"
       >
         <!-- 文章图片 -->
         <div v-if="feed.image_url" class="aspect-video w-full overflow-hidden rounded-t-lg">
@@ -53,7 +52,7 @@
           </p>
 
           <!-- 标签 -->
-          <div v-if="feed.tags && feed.tags.length > 0" class="flex flex-wrap gap-1 mb-3">
+          <!-- <div v-if="feed.tags && feed.tags.length > 0" class="flex flex-wrap gap-1 mb-3">
             <span
               v-for="tag in feed.tags.slice(0, 3)"
               :key="tag"
@@ -61,7 +60,7 @@
             >
               {{ tag }}
             </span>
-          </div>
+          </div> -->
 
           <!-- 底部信息 -->
           <div class="flex items-center justify-between text-sm text-gray-500">
