@@ -277,41 +277,37 @@ onMounted(async () => {
   }
 }
 
-/* Vue Transition 类名 */
+/* Vue Transition 进入状态 - 初始状态 */
+.hero-fade-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Vue Transition 进入激活状态 - 过渡效果 */
 .hero-fade-enter-active {
-  animation: fadeInUp 0.8s ease-out;
+  transition: all 0.8s ease-out;
+}
+
+/* Vue Transition 进入结束状态 - 最终状态 */
+.hero-fade-enter-to {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* 为不同元素设置不同的延迟 */
-.hero-badge {
-  animation-delay: 0.1s;
-  opacity: 0;
-  animation-fill-mode: forwards;
+.hero-fade-enter-active.hero-badge {
+  transition-delay: 0.1s;
 }
 
-.hero-title-1 {
-  animation-delay: 0.3s;
-  opacity: 0;
-  animation-fill-mode: forwards;
+.hero-fade-enter-active.hero-title-1 {
+  transition-delay: 0.3s;
 }
 
-.hero-title-2 {
-  animation-delay: 0.5s;
-  opacity: 0;
-  animation-fill-mode: forwards;
+.hero-fade-enter-active.hero-title-2 {
+  transition-delay: 0.5s;
 }
 
-.hero-description {
-  animation-delay: 0.7s;
-  opacity: 0;
-  animation-fill-mode: forwards;
-}
-
-/* 应用动画 */
-.hero-badge,
-.hero-title-1,
-.hero-title-2,
-.hero-description {
-  animation: fadeInUp 0.8s ease-out forwards;
+.hero-fade-enter-active.hero-description {
+  transition-delay: 0.7s;
 }
 </style>
