@@ -5,22 +5,30 @@
       <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
       <div class="relative left-24 top-5 max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- 小标签 -->
-        <div class="inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-sm mb-6">
-          <Icon name="heroicons:rocket-launch" class="w-4 h-4 mr-2" />
-          连接智能制造生态系统
-        </div>
+        <Transition name="hero-fade" appear>
+          <div class="inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-sm mb-6 hero-badge">
+            <Icon name="heroicons:rocket-launch" class="w-4 h-4 mr-2" />
+            连接智能制造生态系统
+          </div>
+        </Transition>
         
         <!-- 主标题 -->
-        <h2 class="text-5xl text-white md:text-6xl font-bold mb-8 mt=4">
-          工业自动化
-        </h2>
+        <Transition name="hero-fade" appear>
+          <h2 class="text-5xl text-white md:text-6xl font-bold mb-8 mt=4 hero-title-1">
+            工业自动化
+          </h2>
+        </Transition>
 
-        <h1 class="text-4xl text-orange-500 md:text-5xl font-bold mb-8 mt=4 mb-8 mt-4">智能导航平台</h1>
+        <Transition name="hero-fade" appear>
+          <h1 class="text-4xl text-orange-500 md:text-5xl font-bold mb-8 mt=4 mb-8 mt-4 hero-title-2">智能导航平台</h1>
+        </Transition>
         
         <!-- 副标题 -->
-        <p class="text-xl text-gray-400 max-w-2xl mb-12 mt-12">
-          汇聚全球领先的工业自动化企业，供应商和技术解决方案，助力企业实现数字化转型与智能制造升级
-        </p>
+        <Transition name="hero-fade" appear>
+          <p class="text-xl text-gray-400 max-w-2xl mb-12 mt-12 hero-description">
+            汇聚全球领先的工业自动化企业，供应商和技术解决方案，助力企业实现数字化转型与智能制造升级
+          </p>
+        </Transition>
         
         <!-- 搜索框 -->
         <div class="flex items-center max-w-2xl">
@@ -255,3 +263,55 @@ onMounted(async () => {
   await refreshData()
 })
 </script>
+
+<style scoped>
+/* 入场动画关键帧 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Vue Transition 类名 */
+.hero-fade-enter-active {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* 为不同元素设置不同的延迟 */
+.hero-badge {
+  animation-delay: 0.1s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.hero-title-1 {
+  animation-delay: 0.3s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.hero-title-2 {
+  animation-delay: 0.5s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.hero-description {
+  animation-delay: 0.7s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+/* 应用动画 */
+.hero-badge,
+.hero-title-1,
+.hero-title-2,
+.hero-description {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+</style>
