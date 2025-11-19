@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="w-full grid grid-cols-2 gap-4">
     <!-- 信息流标题和筛选 -->
     <!-- <div class="flex items-center justify-between">
       <div class="flex items-center space-x-2">
@@ -16,12 +16,8 @@
     </div> -->
 
     <!-- 信息流列表 -->
-    <div class="flex flex-col">
-      <div
-        v-for="feed in displayedFeeds"
-        :key="feed.id"
-        class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-200 mb-2"
-      >
+    <div v-for="feed in displayedFeeds" :key="feed.id">
+      <div class="news-card">
         <!-- 文章图片 -->
         <div v-if="feed.image_url" class="aspect-video w-full overflow-hidden rounded-t-lg">
           <img
@@ -33,8 +29,13 @@
 
         <!-- 文章内容 -->
         <div class="p-4">
+          <!-- 标签 -->
+          <span v-if="feed.tags && feed.tags[0]" class="inline-block px-2 py-1 rounded text-xs font-medium bg-orange-50 text-orange-600 mb-2">
+            {{ feed.tags[0] }}
+          </span>
+          
           <!-- 标题 -->
-          <h4 class="font-medium text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 cursor-pointer">
+          <h4 class="font-medium text-gray-900 mb-2 line-clamp-2 hover:text-orange-500 cursor-pointer">
             <a
               v-if="feed.source_url"
               :href="feed.source_url"
@@ -47,7 +48,7 @@
           </h4>
 
           <!-- 摘要 -->
-          <p v-if="feed.summary" class="text-sm text-gray-600 mb-3 line-clamp-3">
+          <p v-if="feed.summary" class="text-sm text-gray-600 mb-3 line-clamp-2">
             {{ feed.summary }}
           </p>
 
@@ -63,44 +64,44 @@
           </div> -->
 
           <!-- 底部信息 -->
-          <div class="flex items-center justify-between text-sm text-gray-500">
-            <div class="flex items-center space-x-2">
-              <span v-if="feed.company_name" class="font-medium">{{ feed.company_name }}</span>
-              <span v-if="feed.published_at">{{ formatDate(feed.published_at) }}</span>
-            </div>
+          <div class="flex items-center justify-between text-sm text-gray-500 mt-4">
+            <span v-if="feed.published_at" class="text-gray-500">{{ formatDate(feed.published_at) }}</span>
+            <span v-if="feed.company_name" class="font-medium text-gray-600">{{ feed.company_name }}</span>
+          </div>
             
-            <div class="flex items-center space-x-1">
-              <UButton
-                v-if="feed.source_url"
-                variant="ghost"
-                size="xs"
-                :to="feed.source_url"
-                target="_blank"
-              >
-                <Icon name="heroicons:arrow-top-right-on-square" class="w-4 h-4" />
-              </UButton>
-              <UButton variant="ghost" size="xs" @click="shareArticle(feed)">
-                <Icon name="heroicons:share" class="w-4 h-4" />
-              </UButton>
-            </div>
+          <div class="flex items-center space-x-1">
+            <UButton
+              v-if="feed.source_url"
+              variant="ghost"
+              size="xs"
+              :to="feed.source_url"
+              target="_blank"
+              class="text-gray-400 hover:text-orange-500"
+            >
+              <Icon name="heroicons:arrow-top-right-on-square" class="w-4 h-4" />
+            </UButton>
+            <UButton variant="ghost" size="xs" @click="shareArticle(feed)" class="text-gray-400 hover:text-orange-500">
+              <Icon name="heroicons:share" class="w-4 h-4" />
+            </UButton>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 空状态 -->
-    <div v-if="displayedFeeds.length === 0" class="text-center py-12">
+    <div v-if="displayedFeeds.length === 0" class="col-span-full text-center py-12">
       <Icon name="heroicons:newspaper" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
       <h3 class="text-lg font-medium text-gray-900 mb-2">暂无资讯</h3>
       <p class="text-gray-500">还没有相关的资讯信息</p>
     </div>
 
     <!-- 加载更多 -->
-    <div v-if="hasMore && displayedFeeds.length > 0" class="text-center">
+    <div v-if="hasMore && displayedFeeds.length > 0" class="text-center mt-4">
       <UButton
         variant="outline"
         :loading="loading"
         @click="loadMore"
+        class="border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white"
       >
         加载更多
       </UButton>

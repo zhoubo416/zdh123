@@ -4,6 +4,14 @@ export default defineNuxtConfig({
     '@nuxt/ui'
   ],
   css: ['~/assets/css/main.css'],
+  colorMode: {
+    preference: 'light',
+    fallback: 'light'
+  },
+  ui: {
+    primary: 'orange',
+    gray: 'slate'
+  },
   runtimeConfig: {
     // Private keys (only available on server-side)
     databaseUrl: process.env.DATABASE_URL,

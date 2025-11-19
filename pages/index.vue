@@ -1,94 +1,165 @@
 <template>
-  <div>
-    <!-- 分类导航 -->
-    <section class="bg-white border-b">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">行业分类</h2>
-          <UButton variant="outline" size="sm" @click="refreshData">
-            <Icon name="heroicons:arrow-path" class="w-4 h-4 mr-2" />
-            刷新
-          </UButton>
+  <div class="">
+    <!-- Hero Section - 黑色背景 -->
+    <section class="relative bg-black text-white py-24 h-[90vh]">
+      <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
+      <div class="relative left-24 top-5 max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!-- 小标签 -->
+        <div class="inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-sm mb-6">
+          <Icon name="heroicons:rocket-launch" class="w-4 h-4 mr-2" />
+          连接智能制造生态系统
         </div>
+        
+        <!-- 主标题 -->
+        <h2 class="text-5xl text-white md:text-6xl font-bold mb-8 mt=4">
+          工业自动化
+        </h2>
 
-        <div class="flex items-center space-x-4 overflow-x-auto pb-2 w-full">
-          <div v-for="category in categories" :key="category.id"
-            class="flex flex-col items-center w-30 p-2 mt-4 rounded-lg border hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all duration-200"
-            :class="{ 'border-blue-500 bg-blue-50': selectedCategory === category.id }"
-            @click="selectCategory(category.id)">
-            <Icon :name="`heroicons:${category.icon || 'cube'}`" class="w-6 h-6 text-blue-600 mb-2" />
-            <span class="text-xs font-medium text-gray-900">{{ category.name }}</span>
+        <h1 class="text-4xl text-orange-500 md:text-5xl font-bold mb-8 mt=4 mb-8 mt-4">智能导航平台</h1>
+        
+        <!-- 副标题 -->
+        <p class="text-xl text-gray-400 max-w-2xl mb-12 mt-12">
+          汇聚全球领先的工业自动化企业，供应商和技术解决方案，助力企业实现数字化转型与智能制造升级
+        </p>
+        
+        <!-- 搜索框 -->
+        <div class="flex items-center max-w-2xl">
+          <div class="relative flex-1">
+            <Icon name="heroicons:magnifying-glass" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="搜索企业、产品或技术..."
+              class="w-full pl-12 pr-4 py-4 rounded-l-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+          <button class="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-r-lg transition-colors">
+            开始搜索
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 行业分类 Section -->
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-gray-900 mb-3">行业分类</h2>
+          <p class="text-gray-600">涵盖工业自动化全产业链，为您精准匹配所需领域</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div
+            v-for="category in categories"
+            :key="category.id"
+            class="category-card group"
+            :class="{ 'border-orange-500 shadow-lg': selectedCategory === category.id }"
+            @click="selectCategory(category.id)"
+          >
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                <Icon :name="`heroicons:${category.icon || 'cube'}`" class="w-6 h-6 text-orange-500" />
+              </div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-gray-900 mb-1">{{ category.name }}</h3>
+                <p class="text-sm text-gray-600">{{ getCompanyCount(category.id) }} 家企业</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="flex flex-row gap-4 w-full p-4">
-      <!-- 供应商侧边栏 -->
-      <section class="w-[20vw] bg-white rounded-lg shadow-sm border p-4">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-gray-900">供应商</h3>
-          <UButton v-if="selectedSupplier" variant="ghost" size="xs" @click="clearSupplier">
-            <Icon name="heroicons:x-mark" class="w-4 h-4" />
-          </UButton>
+    <!-- 企业目录 Section -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">企业目录</h2>
+            <p class="text-gray-600">优质企业信息一站查询，快速找到合作伙伴</p>
+          </div>
+          <NuxtLink 
+            to="/companies" 
+            class="flex items-center px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors group"
+          >
+            查看更多
+            <Icon name="heroicons:arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </NuxtLink>
         </div>
         
-        <div class="space-y-2">
-          <div
-            v-for="supplier in suppliersWithCount"
-            :key="supplier.id"
-            class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
-            :class="{ 'bg-orange-50 border border-orange-200': selectedSupplier === supplier.id }"
-            @click="selectSupplier(supplier.id)"
-          >
-            <div class="flex items-center space-x-2">
-              <Icon name="heroicons:truck" class="w-4 h-4 text-orange-600" />
-              <span class="text-sm font-medium text-gray-900 truncate" :title="supplier.name">
-                {{ supplier.name }}
-              </span>
-            </div>
-            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-              {{ supplier.company_count }}
-            </span>
-          </div>
-          
-          <div v-if="suppliersWithCount.length === 0" class="text-center py-4">
-            <Icon name="heroicons:truck" class="w-8 h-8 text-gray-300 mx-auto mb-2" />
-            <p class="text-sm text-gray-500">暂无供应商</p>
-          </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <CompanyCard
+            v-for="company in filteredCompanies.slice(0, 6)"
+            :key="company.id"
+            :company="company"
+          />
         </div>
-      </section>
-      
-      <!-- 公司列表 -->
-      <section class="flex-1 bg-gray-50">
-
-        <!-- 公司卡片网格 -->
-        <div class="w-full">
-          <CompanyCard class="mb-2" v-for="company in filteredCompanies" :key="company.id" :company="company" />
-        </div>
-
-        <!-- 空状态 -->
+        
         <div v-if="filteredCompanies.length === 0" class="text-center py-12">
           <Icon name="heroicons:building-office" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 class="text-lg font-medium text-gray-900 mb-2">暂无公司数据</h3>
-          <p class="text-gray-500">该分类下还没有添加公司信息</p>
+          <p class="text-gray-500">暂无企业数据</p>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 信息流区域 -->
-      <section class="w-[20vw] bg-gray-50">
-        <div class="w-full">
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="text-2xl font-bold text-gray-900"></h2>
-            <NuxtLink to="/news" class="text-blue-600 hover:text-blue-800 font-medium">
-              行业资讯 →
-            </NuxtLink>
+    <!-- 优质供应商 Section -->
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-12">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-3">优质供应商</h2>
+            <p class="text-gray-600">严格筛选，信誉保证，为您的采购保驾护航</p>
           </div>
-
-          <NewsFeed :feeds="newsFeeds" :limit="6" />
+          <NuxtLink 
+            to="/suppliers" 
+            class="flex items-center px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors group"
+          >
+            查看更多
+            <Icon name="heroicons:arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </NuxtLink>
         </div>
-      </section>
-    </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SupplierCard
+            v-for="supplier in suppliersWithCount.slice(0, 3)"
+            :key="supplier.id"
+            :supplier="supplier"
+          />
+        </div>
+        
+        <div v-if="suppliersWithCount.length === 0" class="text-center py-8">
+          <Icon name="heroicons:truck" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <p class="text-gray-500">暂无供应商</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 行业资讯 Section -->
+    <section class="py-16 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">行业资讯</h2>
+            <p class="text-gray-600">实时追踪行业动态，把握市场趋势与技术前沿</p>
+          </div>
+          <NuxtLink 
+            to="/news" 
+            class="flex items-center px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors group"
+          >
+            查看更多
+            <Icon name="heroicons:arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </NuxtLink>
+        </div>
+        
+        <div class="w-full">
+          <NewsFeed class="w-full" :feeds="newsFeeds" :limit="6" />
+        </div>
+        
+        <div v-if="newsFeeds.length === 0" class="text-center py-12">
+          <Icon name="heroicons:newspaper" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <p class="text-gray-500">暂无资讯</p>
+        </div>
+      </div>
+    </section>
 
   </div>
 </template>
@@ -96,7 +167,7 @@
 <script setup>
 // 页面元数据
 useHead({
-  title: '工控导航 - 工业自动化行业导航门户',
+  title: '工控导航 - 工业自动化智能导航平台',
   meta: [
     { name: 'description', content: '专业的工业自动化行业导航网站，提供英威腾、汇川等知名工控企业官网导航和行业资讯' }
   ]
@@ -141,47 +212,7 @@ const suppliersWithCount = computed(() => {
 // 方法
 const selectCategory = (categoryId) => {
   selectedCategory.value = selectedCategory.value === categoryId ? null : categoryId
-  selectedSupplier.value = null // 清除供应商筛选
-}
-
-const selectSupplier = (supplierId) => {
-  selectedSupplier.value = selectedSupplier.value === supplierId ? null : supplierId
-  selectedCategory.value = null // 清除分类筛选
-}
-
-const clearCategory = () => {
-  selectedCategory.value = null
-}
-
-const clearSupplier = () => {
   selectedSupplier.value = null
-}
-
-const clearAllFilters = () => {
-  selectedCategory.value = null
-  selectedSupplier.value = null
-}
-
-const getCategoryName = (categoryId) => {
-  const category = categories.value.find(cat => cat.id === categoryId)
-  return category ? category.name : ''
-}
-
-const getSupplierName = (supplierId) => {
-  const supplier = suppliers.value.find(sup => sup.id === supplierId)
-  return supplier ? supplier.name : ''
-}
-
-const getFilterTitle = () => {
-  if (selectedCategory.value && selectedSupplier.value) {
-    return `${getCategoryName(selectedCategory.value)} - ${getSupplierName(selectedSupplier.value)}`
-  } else if (selectedCategory.value) {
-    return getCategoryName(selectedCategory.value)
-  } else if (selectedSupplier.value) {
-    return `${getSupplierName(selectedSupplier.value)}的合作公司`
-  } else {
-    return '全部公司'
-  }
 }
 
 const getCompanyCount = (categoryId) => {
@@ -220,7 +251,6 @@ const loadNewsFeeds = async () => {
 
 // 页面初始化
 onMounted(async () => {
-  // 延迟加载数据，确保客户端环境准备就绪
   await nextTick()
   await refreshData()
 })
