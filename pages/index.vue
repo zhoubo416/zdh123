@@ -5,30 +5,57 @@
       <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90"></div>
       <div class="relative left-24 top-5 max-w-7xl mx-auto sm:px-6 lg:px-8">
         <!-- 小标签 -->
-        <Transition name="hero-fade" appear>
-          <div class="inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-sm mb-6 hero-badge">
-            <Icon name="heroicons:rocket-launch" class="w-4 h-4 mr-2" />
-            连接智能制造生态系统
-          </div>
-        </Transition>
+        <ClientOnly>
+          <Transition name="hero-badge-fade" appear>
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-sm mb-6">
+              <Icon name="heroicons:rocket-launch" class="w-4 h-4 mr-2" />
+              连接智能制造生态系统
+            </div>
+          </Transition>
+          <template #fallback>
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-sm mb-6">
+              <Icon name="heroicons:rocket-launch" class="w-4 h-4 mr-2" />
+              连接智能制造生态系统
+            </div>
+          </template>
+        </ClientOnly>
         
         <!-- 主标题 -->
-        <Transition name="hero-fade" appear>
-          <h2 class="text-5xl text-white md:text-6xl font-bold mb-8 mt=4 hero-title-1">
-            工业自动化
-          </h2>
-        </Transition>
+        <ClientOnly>
+          <Transition name="hero-title1-fade" appear>
+            <h2 class="text-5xl text-white md:text-6xl font-bold mb-8 mt=4">
+              工业自动化
+            </h2>
+          </Transition>
+          <template #fallback>
+            <h2 class="text-5xl text-white md:text-6xl font-bold mb-8 mt=4">
+              工业自动化
+            </h2>
+          </template>
+        </ClientOnly>
 
-        <Transition name="hero-fade" appear>
-          <h1 class="text-4xl text-orange-500 md:text-5xl font-bold mb-8 mt=4 mb-8 mt-4 hero-title-2">智能导航平台</h1>
-        </Transition>
+        <ClientOnly>
+          <Transition name="hero-title2-fade" appear>
+            <h1 class="text-4xl text-orange-500 md:text-5xl font-bold mb-8 mt=4 mb-8 mt-4">智能导航平台</h1>
+          </Transition>
+          <template #fallback>
+            <h1 class="text-4xl text-orange-500 md:text-5xl font-bold mb-8 mt=4 mb-8 mt-4">智能导航平台</h1>
+          </template>
+        </ClientOnly>
         
         <!-- 副标题 -->
-        <Transition name="hero-fade" appear>
-          <p class="text-xl text-gray-400 max-w-2xl mb-12 mt-12 hero-description">
-            汇聚全球领先的工业自动化企业，供应商和技术解决方案，助力企业实现数字化转型与智能制造升级
-          </p>
-        </Transition>
+        <ClientOnly>
+          <Transition name="hero-desc-fade" appear>
+            <p class="text-xl text-gray-400 max-w-2xl mb-12 mt-12">
+              汇聚全球领先的工业自动化企业，供应商和技术解决方案，助力企业实现数字化转型与智能制造升级
+            </p>
+          </Transition>
+          <template #fallback>
+            <p class="text-xl text-gray-400 max-w-2xl mb-12 mt-12">
+              汇聚全球领先的工业自动化企业，供应商和技术解决方案，助力企业实现数字化转型与智能制造升级
+            </p>
+          </template>
+        </ClientOnly>
         
         <!-- 搜索框 -->
         <div class="flex items-center max-w-2xl">
@@ -265,49 +292,42 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 入场动画关键帧 */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Vue Transition 进入状态 - 初始状态 */
-.hero-fade-enter-from {
+/* 通用的 enter-from 状态 - 初始状态 */
+.hero-badge-fade-enter-from,
+.hero-title1-fade-enter-from,
+.hero-title2-fade-enter-from,
+.hero-desc-fade-enter-from {
   opacity: 0;
   transform: translateY(30px);
 }
 
-/* Vue Transition 进入激活状态 - 过渡效果 */
-.hero-fade-enter-active {
-  transition: all 0.8s ease-out;
-}
-
-/* Vue Transition 进入结束状态 - 最终状态 */
-.hero-fade-enter-to {
+/* 通用的 enter-to 状态 - 最终状态 */
+.hero-badge-fade-enter-to,
+.hero-title1-fade-enter-to,
+.hero-title2-fade-enter-to,
+.hero-desc-fade-enter-to {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* 为不同元素设置不同的延迟 */
-.hero-fade-enter-active.hero-badge {
+/* 为每个元素设置不同的延迟和过渡效果 */
+.hero-badge-fade-enter-active {
+  transition: all 0.8s ease-out;
   transition-delay: 0.1s;
 }
 
-.hero-fade-enter-active.hero-title-1 {
+.hero-title1-fade-enter-active {
+  transition: all 0.8s ease-out;
   transition-delay: 0.3s;
 }
 
-.hero-fade-enter-active.hero-title-2 {
+.hero-title2-fade-enter-active {
+  transition: all 0.8s ease-out;
   transition-delay: 0.5s;
 }
 
-.hero-fade-enter-active.hero-description {
+.hero-desc-fade-enter-active {
+  transition: all 0.8s ease-out;
   transition-delay: 0.7s;
 }
 </style>
